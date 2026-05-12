@@ -414,12 +414,15 @@
     <div class="col-midia">
       <div class="midia-titulo">Promoções</div>
       <div class="midia-area" id="midia-area">
-        <div class="sem-midia" id="sem-midia">
-          <span>📺</span>
-          <div>Adicione fotos<br>ou vídeos abaixo</div>
-        </div>
-        <video id="midia-video" muted playsinline style="display:none"></video>
-        <img id="midia-img" style="display:none" alt="promoção"/>
+        <div class="sem-midia" id="sem-midia" style="display:none"></div>
+        <!-- YouTube como fundo padrão -->
+        <iframe id="yt-frame"
+          src="https://www.youtube.com/embed/XTbJFxvjWwM?autoplay=1&mute=1&loop=1&playlist=XTbJFxvjWwM&controls=0&modestbranding=1&rel=0"
+          frameborder="0" allow="autoplay; encrypted-media"
+          allowfullscreen
+          style="width:100%;height:100%;position:absolute;top:0;left:0;border:none;"></iframe>
+        <video id="midia-video" muted playsinline style="display:none;position:relative;z-index:2"></video>
+        <img id="midia-img" style="display:none;position:relative;z-index:2" alt="promoção"/>
       </div>
       <div class="upload-area">
         <div class="midia-contador" id="midia-contador"></div>
