@@ -420,9 +420,12 @@
           src="https://www.youtube.com/embed/XTbJFxvjWwM?autoplay=1&mute=1&loop=1&playlist=XTbJFxvjWwM&controls=0&modestbranding=1&rel=0"
           frameborder="0" allow="autoplay; encrypted-media"
           allowfullscreen
-          style="width:100%;height:100%;position:absolute;top:0;left:0;border:none;"></iframe>
-        <video id="midia-video" muted playsinline style="display:none;position:relative;z-index:2"></video>
-        <img id="midia-img" style="display:none;position:relative;z-index:2" alt="promoção"/>
+          style="width:100%;height:115%;position:absolute;top:-8%;left:0;border:none;"></iframe>
+        <!-- Camada que cobre logo/conta do YouTube (topo e base) -->
+        <div style="position:absolute;top:0;left:0;right:0;height:14%;background:#000;z-index:3;pointer-events:none;"></div>
+        <div style="position:absolute;bottom:0;left:0;right:0;height:14%;background:#000;z-index:3;pointer-events:none;"></div>
+        <video id="midia-video" muted playsinline style="display:none;position:relative;z-index:4"></video>
+        <img id="midia-img" style="display:none;position:relative;z-index:4" alt="promoção"/>
       </div>
       <div class="upload-area">
         <div class="midia-contador" id="midia-contador"></div>
@@ -590,20 +593,26 @@
     carregarMidias();
     setInterval(carregarMidias, 30000);
 
-    // ── Playlist YouTube — alterna os dois vídeos a cada 60s ──
-    const ytVideos = [
-      'XTbJFxvjWwM',
-      'GFUWHG3HvA4'
-    ];
+    // ── Playlist YouTube — alterna os dois vídeos a cada 90s ──
+    const ytVideos = ['XTbJFxvjWwM', 'GFUWHG3HvA4'];
     let ytIdx = 0;
-    const ytFrame = document.getElementById('yt-frame');
 
     function trocarYT() {
       ytIdx = (ytIdx + 1) % ytVideos.length;
       const id = ytVideos[ytIdx];
-      ytFrame.src = `https://www.youtube.com/embed/${id}?autoplay=1&mute=1&loop=1&playlist=${id}&controls=0&modestbranding=1&rel=0`;
+      const area = document.getElementById('midia-area');
+      const old = document.getElementById('yt-frame');
+      if (old) old.remove();
+      const iframe = document.createElement('iframe');
+      iframe.id = 'yt-frame';
+      iframe.src = `https://www.youtube.com/embed/${id}?autoplay=1&mute=1&loop=1&playlist=${id}&controls=0&modestbranding=1&rel=0`;
+      iframe.setAttribute('frameborder', '0');
+      iframe.setAttribute('allow', 'autoplay; encrypted-media');
+      iframe.setAttribute('allowfullscreen', '');
+      iframe.style.cssText = 'width:100%;height:115%;position:absolute;top:-8%;left:0;border:none;';
+      area.insertBefore(iframe, area.firstChild);
     }
-    setInterval(trocarYT, 60000); // troca a cada 60 segundos
+    setInterval(trocarYT, 90000); // troca a cada 90 segundos
 
     // ── Som campainha ──
     function tocarSom() {
