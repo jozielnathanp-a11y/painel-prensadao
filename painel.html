@@ -415,9 +415,9 @@
       <div class="midia-titulo">Promoções</div>
       <div class="midia-area" id="midia-area">
         <div class="sem-midia" id="sem-midia" style="display:none"></div>
-        <!-- YouTube como fundo padrão -->
+        <!-- YouTube playlist manual -->
         <iframe id="yt-frame"
-          src="https://www.youtube.com/embed/XTbJFxvjWwM?autoplay=1&mute=1&loop=1&playlist=XTbJFxvjWwM,GFUWHG3HvA4&controls=0&modestbranding=1&rel=0"
+          src="https://www.youtube.com/embed/XTbJFxvjWwM?autoplay=1&mute=1&loop=1&playlist=XTbJFxvjWwM&controls=0&modestbranding=1&rel=0"
           frameborder="0" allow="autoplay; encrypted-media"
           allowfullscreen
           style="width:100%;height:100%;position:absolute;top:0;left:0;border:none;"></iframe>
@@ -589,6 +589,21 @@
     }
     carregarMidias();
     setInterval(carregarMidias, 30000);
+
+    // ── Playlist YouTube — alterna os dois vídeos a cada 60s ──
+    const ytVideos = [
+      'XTbJFxvjWwM',
+      'GFUWHG3HvA4'
+    ];
+    let ytIdx = 0;
+    const ytFrame = document.getElementById('yt-frame');
+
+    function trocarYT() {
+      ytIdx = (ytIdx + 1) % ytVideos.length;
+      const id = ytVideos[ytIdx];
+      ytFrame.src = `https://www.youtube.com/embed/${id}?autoplay=1&mute=1&loop=1&playlist=${id}&controls=0&modestbranding=1&rel=0`;
+    }
+    setInterval(trocarYT, 60000); // troca a cada 60 segundos
 
     // ── Som campainha ──
     function tocarSom() {
