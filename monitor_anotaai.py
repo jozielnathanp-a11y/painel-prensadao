@@ -18,7 +18,7 @@ import sys
 import os
 from datetime import datetime
 
-PAINEL_URL     = "http://localhost:3000"
+PAINEL_URL     = "https://painel-prensadao.onrender.com"
 ANOTAAI_URL    = "https://admin.anota.ai"
 ANOTAAI_ORDERS = "https://admin.anota.ai/main/orders"
 CHECK_INTERVAL = 3
