@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Prensadão - Operador</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #111;
+      color: #fff;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      background: linear-gradient(135deg, #c0392b, #e74c3c);
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+    }
+
+    header h1 { font-size: 1.4rem; font-weight: 900; letter-spacing: 1px; }
+    header .sub { font-size: 0.85rem; opacity: 0.75; margin-top: 2px; }
+    header .hora { font-size: 1.3rem; font-weight: 700; }
+
+    /* Formulário de adicionar */
+    .form-area {
+      background: #1e1e1e;
+      padding: 20px 24px;
+      border-bottom: 2px solid #333;
+    }
+
+    .form-area h2 {
+      font-size: 1rem;
+      color: rgba(255,255,255,0.5);
+      margin-bottom: 14px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-weight: 600;
+    }
+
+    .form-row {
+      display: flex;
+      gap: 10px;
+      align-items: stretch;
+    }
+
+    .form-input {
+      flex: 1;
+      background: #2a2a2a;
+      border: 2px solid #444;
+      color: #fff;
+      padding: 12px 16px;
+      border-radius: 10px;
+      font-size: 1rem;
+      outline: none;
+      transition: border 0.2s;
+    }
+
+    .form-input:focus { border-color: #e74c3c; }
+    .form-input::placeholder { color: rgba(255,255,255,0.25); }
+
+    .input-numero {
+      max-width: 160px;
+    }
+
+    .btn-add {
+      background: #e74c3c;
+      color: #fff;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.2s;
+      white-space: nowrap;
+    }
+
+    .btn-add:hover { background: #c0392b; }
+
+    /* Listas */
+    .listas {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+      flex: 1;
+    }
+
+    .lista-col {
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      overflow-y: auto;
+      max-height: calc(100vh - 200px);
+    }
+
+    .lista-col:first-child { border-right: 2px solid #2a2a2a; }
+
+    .col-titulo {
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      padding: 8px 12px;
+      border-radius: 8px;
+      margin-bottom: 4px;
+    }
+
+    .titulo-preparo { background: #1a3a5c; color: #5dade2; }
+    .titulo-pronto  { background: #1a3a1a; color: #58d68d; }
+
+    .card {
+      border-radius: 10px;
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      animation: entrar 0.3s ease;
+    }
+
+    @keyframes entrar {
+      from { opacity: 0; transform: translateY(-10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .card-preparo {
+      background: #1a2d3d;
+      border: 1px solid #2980b9;
+    }
+
+    .card-pronto {
+      background: #1a3d1a;
+      border: 1px solid #27ae60;
+    }
+
+    .card-info { flex: 1; min-width: 0; }
+    .card-numero { font-size: 0.75rem; color: rgba(255,255,255,0.5); margin-bottom: 2px; }
+    .card-nome { font-size: 1.1rem; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .card-hora { font-size: 0.72rem; color: rgba(255,255,255,0.4); margin-top: 2px; }
+
+    .acoes { display: flex; gap: 6px; flex-shrink: 0; }
+
+    .btn-acao {
+      border: none;
+      padding: 8px 12px;
+      border-radius: 7px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+
+    .btn-chamar {
+      background: #27ae60;
+      color: #fff;
+    }
+    .btn-chamar:hover { background: #1e8449; }
+
+    .btn-remover {
+      background: #c0392b;
+      color: #fff;
+    }
+    .btn-remover:hover { background: #922b21; }
+
+    .btn-concluir {
+      background: #e67e22;
+      color: #fff;
+    }
+    .btn-concluir:hover { background: #ca6f1e; }
+
+    .vazio {
+      color: rgba(255,255,255,0.2);
+      font-size: 0.9rem;
+      text-align: center;
+      padding: 20px;
+      font-style: italic;
+    }
+
+    /* Status de conexão */
+    .status-bar {
+      background: #1a1a1a;
+      padding: 6px 24px;
+      font-size: 0.75rem;
+      color: rgba(255,255,255,0.3);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-bottom: 1px solid #222;
+    }
+
+    .status-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: #27ae60;
+    }
+
+    .status-dot.offline { background: #e74c3c; }
+
+    /* Link para o painel do cliente */
+    .link-cliente {
+      background: #1a1a1a;
+      padding: 8px 24px;
+      font-size: 0.8rem;
+      color: rgba(255,255,255,0.35);
+      border-bottom: 1px solid #222;
+    }
+
+    .link-cliente a { color: #5dade2; text-decoration: none; }
+    .link-cliente a:hover { text-decoration: underline; }
+
+    .lista-col::-webkit-scrollbar { width: 4px; }
+    .lista-col::-webkit-scrollbar-track { background: transparent; }
+    .lista-col::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div>
+      <h1>🍔 Prensadão — Painel do Operador</h1>
+      <div class="sub">Use esta tela para gerenciar os pedidos</div>
+    </div>
+    <div class="hora" id="hora">00:00</div>
+  </header>
+
+  <div class="status-bar">
+    <div class="status-dot" id="status-dot"></div>
+    <span id="status-txt">Conectado</span>
+  </div>
+
+  <div class="link-cliente">
+    📺 Tela do cliente: <a href="http://localhost:3000" target="_blank">http://localhost:3000</a>
+    &nbsp;—&nbsp; Abra esse link no monitor dos clientes em tela cheia (F11)
+  </div>
+
+  <!-- Formulário -->
+  <div class="form-area">
+    <h2>➕ Novo pedido em preparo</h2>
+    <div class="form-row">
+      <input class="form-input" id="input-nome" type="text" placeholder="Nome do cliente" maxlength="40" />
+      <input class="form-input input-numero" id="input-numero" type="text" placeholder="Nº pedido (opcional)" maxlength="10" />
+      <button class="btn-add" onclick="adicionarPedido()">Adicionar</button>
+      <button class="btn-add" style="background:#555" onclick="limparRetirados()">🗑️ Limpar Retirados</button>
+      <button class="btn-add" style="background:#333" onclick="limparTudo()">⚠️ Limpar Tudo</button>
+    </div>
+  </div>
+
+  <!-- Listas -->
+  <div class="listas">
+    <!-- Em preparo -->
+    <div class="lista-col">
+      <div class="col-titulo titulo-preparo">👨‍🍳 Em Preparo</div>
+      <div id="lista-preparo"><div class="vazio">Nenhum pedido em preparo</div></div>
+    </div>
+
+    <!-- Prontos para retirar -->
+    <div class="lista-col">
+      <div class="col-titulo titulo-pronto">🔔 Chamados para Retirar</div>
+      <div id="lista-prontos"><div class="vazio">Nenhum pedido chamado ainda</div></div>
+    </div>
+  </div>
+
+  <script>
+    // ── Relógio ──
+    function atualizarHora() {
+      document.getElementById('hora').textContent =
+        new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+    }
+    setInterval(atualizarHora, 1000);
+    atualizarHora();
+
+    // ── Estado ──
+    let estado = { prontos: [], retirados: [] };
+
+    function formatarHora(iso) {
+      return new Date(iso).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+    }
+
+    // ── Renderização ──
+    function renderizar() {
+      // Lista "Em Preparo" = pedidos na fila (prontos no backend = em preparo aqui)
+      const preparo = document.getElementById('lista-preparo');
+      if (estado.prontos.length === 0) {
+        preparo.innerHTML = '<div class="vazio">Nenhum pedido em preparo</div>';
+      } else {
+        preparo.innerHTML = estado.prontos.map(p => `
+          <div class="card card-preparo">
+            <div class="card-info">
+              <div class="card-numero">Pedido #${p.numero}</div>
+              <div class="card-nome">${p.nome}</div>
+              <div class="card-hora">Desde ${formatarHora(p.prontoEm)}</div>
+            </div>
+            <div class="acoes">
+              <button class="btn-acao btn-chamar" onclick="chamarCliente('${p.id}')">🔔 Chamar</button>
+              <button class="btn-acao btn-remover" onclick="removerPedido('${p.id}')">✕</button>
+            </div>
+          </div>
+        `).join('');
+      }
+
+      // Lista "Chamados" = retirados no backend
+      const prontos = document.getElementById('lista-prontos');
+      if (estado.retirados.length === 0) {
+        prontos.innerHTML = '<div class="vazio">Nenhum pedido chamado ainda</div>';
+      } else {
+        prontos.innerHTML = estado.retirados.map(p => `
+          <div class="card card-pronto">
+            <div class="card-info">
+              <div class="card-numero">Pedido #${p.numero}</div>
+              <div class="card-nome">${p.nome}</div>
+              <div class="card-hora">Chamado às ${formatarHora(p.retiradoEm)}</div>
+            </div>
+            <div class="acoes">
+              <button class="btn-acao btn-concluir" onclick="concluirPedido('${p.id}')">✅ Concluído</button>
+            </div>
+          </div>
+        `).join('');
+      }
+    }
+
+    // ── Ações ──
+    function adicionarPedido() {
+      const nome = document.getElementById('input-nome').value.trim();
+      if (!nome) {
+        document.getElementById('input-nome').focus();
+        document.getElementById('input-nome').style.borderColor = '#e74c3c';
+        setTimeout(() => document.getElementById('input-nome').style.borderColor = '#444', 1500);
+        return;
+      }
+      const numero = document.getElementById('input-numero').value.trim() ||
+                     Math.floor(Math.random() * 900 + 100).toString();
+
+      fetch('/pedido-manual', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nome, numero, chamar: false })
+      });
+
+      document.getElementById('input-nome').value = '';
+      document.getElementById('input-numero').value = '';
+      document.getElementById('input-nome').focus();
+    }
+
+    function chamarCliente(id) {
+      fetch('/retirado', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id })
+      });
+    }
+
+    function removerPedido(id) {
+      fetch('/remover', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id })
+      });
+    }
+
+    function concluirPedido(id) {
+      fetch('/concluir', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id })
+      });
+    }
+
+    function limparRetirados() {
+      if (!confirm('Remover todos os pedidos da coluna "Retirar"?')) return;
+      fetch('/limpar-retirados', { method: 'POST' });
+    }
+
+    function limparTudo() {
+      if (!confirm('⚠️ Remover TODOS os pedidos (preparo + retirar)?')) return;
+      fetch('/limpar', { method: 'POST' });
+    }
+
+    // ── Enter nos inputs ──
+    document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('input-nome').addEventListener('keydown', e => {
+        if (e.key === 'Enter') document.getElementById('input-numero').focus();
+      });
+      document.getElementById('input-numero').addEventListener('keydown', e => {
+        if (e.key === 'Enter') adicionarPedido();
+      });
+    });
+
+    // ── SSE ──
+    function conectarSSE() {
+      const ev = new EventSource('/events');
+      const dot = document.getElementById('status-dot');
+      const txt = document.getElementById('status-txt');
+
+      ev.onopen = () => {
+        dot.classList.remove('offline');
+        txt.textContent = 'Conectado';
+      };
+
+      ev.onmessage = (e) => {
+        const data = JSON.parse(e.data);
+        if (data.tipo === 'estado') { estado = data.pedidos; renderizar(); }
+        if (data.tipo === 'novo_pedido') { estado.prontos.unshift(data.pedido); renderizar(); }
+        if (data.tipo === 'atualizado') { estado = data.pedidos; renderizar(); }
+      };
+
+      ev.onerror = () => {
+        dot.classList.add('offline');
+        txt.textContent = 'Reconectando...';
+        ev.close();
+        setTimeout(conectarSSE, 3000);
+      };
+    }
+
+    conectarSSE();
+  </script>
+</body>
+</html>
